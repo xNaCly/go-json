@@ -26,8 +26,9 @@ func main() {
 	if len(args) == 3 {
 		json := Must(libjson.NewReader(file))
 		query := os.Args[2]
-		fmt.Printf("%+#v\n", Must(libjson.Get[any](json, query)))
+		fmt.Printf("%+#v\n", Must(libjson.Get[any](&json, query)))
 	} else {
-		fmt.Println(Must(libjson.Get[any](Must(libjson.NewReader(file)), ".")))
+		json := Must(libjson.NewReader(file))
+		fmt.Println(Must(libjson.Get[any](&json, ".")))
 	}
 }
