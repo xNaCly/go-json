@@ -1,7 +1,6 @@
 package libjson
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -39,13 +38,13 @@ func TestObjectReadme(t *testing.T) {
 	jsonObj, _ := New([]byte(input)) // or libjson.NewReader(r io.Reader)
 
 	// accessing values
-	fmt.Println(Get[string](&jsonObj, ".hello.world.0")) // hi
+	// fmt.Println(Get[string](&jsonObj, ".hello.world.0")) // hi
 
 	// updating values
 	Set(&jsonObj, ".hello.world.0", "heyho")
-	fmt.Println(Get[string](&jsonObj, ".hello.world.0")) // heyho
+	// fmt.Println(Get[string](&jsonObj, ".hello.world.0")) // heyho
 	Set(&jsonObj, ".hello.world", []string{"hi", "heyho"})
-	fmt.Println(Get[string](&jsonObj, ".hello.world")) // []string{"hi", "heyho"}
+	// fmt.Println(Get[string](&jsonObj, ".hello.world")) // []string{"hi", "heyho"}
 
 	// compiling queries for faster access
 	// helloWorldQuery, _ := Compile[[]any](jsonObj, ".hello.world")

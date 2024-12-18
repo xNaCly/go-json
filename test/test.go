@@ -42,15 +42,14 @@ func main() {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		m := []struct {
-			Name     string
-			Language string
-			Id       string
-			Bio      string
-			Version  float64
+		v := []struct {
+			Key1      string
+			Array     []any
+			Obj       any
+			AtomArray []any
 		}{}
 		d := json.NewDecoder(file)
-		err = d.Decode(&m)
+		err = d.Decode(&v)
 		if err != nil {
 			log.Fatalln(err)
 		}
