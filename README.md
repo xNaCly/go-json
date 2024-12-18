@@ -61,26 +61,16 @@ Below this section is a list of performance improvements and their impact on
 the overall performance as well as the full results of
 [test/bench.sh](test/bench.sh).
 
-### []()
+### [88c5eb9](https://github.com/xNaCly/libjson/commit/88c5eb91c4fb1586af29b2cab3563b6ade424323)
 
 | JSON size | `encoding/json` | `libjson` |
 | --------- | --------------- | --------- |
-| 1MB       | 12.4ms          | 12.0ms    |
-| 5MB       | 59.6ms          | 50ms      |
-| 10MB      | 115.0ms         | 96ms      |
+| 1MB       | 25.2ms          | 12.0ms    |
+| 5MB       | 117.3ms         | 50ms      |
+| 10MB      | 227ms           | 96ms      |
 
-- use `[]byte` as source for lexer instead of `bufio.Reader`
-- thus use slicing into the original array instead of copying bytes for numbers
-  and strings
-- inline comparison for `null`, `false` and `true`, saves 3, 4 and 3
-  `lexer.advance` invocations, replaces them with direct byte slice access and
-  comparison
-
-This change allowed for the omission of memory allocations for every byte
-collected for number and string processing. Instead of doing so, this change
-enables the usage of sub slices of the original data and thus does not create
-new memory until the parser processes the string or number - resulting in 0.4ms
-faster execution for 1MB, 10ms for 5MB and 21ms for 10MB JSON inputs.
+This commit made the tests more comparably by actually unmarshalling json into
+a go data structure.
 
 ### [a36a1bd](https://github.com/xNaCly/libjson/commit/a36a1bd042b10ce779c95c7c1e52232cf8d16fab)
 
