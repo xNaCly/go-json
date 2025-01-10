@@ -21,13 +21,6 @@ func (p *parser) advance() error {
 	return nil
 }
 
-func (p *parser) expect(t t_json) error {
-	if p.cur_tok.Type != t {
-		return fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t])
-	}
-	return p.advance()
-}
-
 // parses toks into a valid json representation, thus the return type can be
 // either map[string]any, []any, string, nil, false, true or a number
 func (p *parser) parse(input []byte) (any, error) {
@@ -57,7 +50,10 @@ func (p *parser) expression() (any, error) {
 }
 
 func (p *parser) object() (map[string]any, error) {
-	err := p.expect(t_left_curly)
+	if p.cur_tok.Type != t_left_curly {
+		return nil, fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t_left_curly])
+	}
+	err := p.advance()
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +61,7 @@ func (p *parser) object() (map[string]any, error) {
 	m := make(map[string]any, 4)
 
 	if p.cur_tok.Type == t_right_curly {
-		err = p.advance()
+		err := p.advance()
 		if err != nil {
 			return nil, err
 		}
@@ -74,20 +70,29 @@ func (p *parser) object() (map[string]any, error) {
 
 	for p.cur_tok.Type != t_eof && p.cur_tok.Type != t_right_curly {
 		if len(m) > 0 {
-			err := p.expect(t_comma)
+			if p.cur_tok.Type != t_comma {
+				return nil, fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t_comma])
+			}
+			err := p.advance()
 			if err != nil {
 				return nil, err
 			}
 		}
 
+		if p.cur_tok.Type != t_string {
+			return nil, fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t_string])
+		}
 		in := p.input[p.cur_tok.Start:p.cur_tok.End]
 		key := *(*string)(unsafe.Pointer(&in))
-		err := p.expect(t_string)
+		err := p.advance()
 		if err != nil {
 			return nil, err
 		}
 
-		err = p.expect(t_colon)
+		if p.cur_tok.Type != t_colon {
+			return nil, fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t_colon])
+		}
+		err = p.advance()
 		if err != nil {
 			return nil, err
 		}
@@ -107,7 +112,10 @@ func (p *parser) object() (map[string]any, error) {
 		m[key] = val
 	}
 
-	err = p.expect(t_right_curly)
+	if p.cur_tok.Type != t_right_curly {
+		return nil, fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t_right_curly])
+	}
+	err = p.advance()
 	if err != nil {
 		return nil, err
 	}
@@ -116,21 +124,26 @@ func (p *parser) object() (map[string]any, error) {
 }
 
 func (p *parser) array() ([]any, error) {
-	err := p.expect(t_left_braket)
+	if p.cur_tok.Type != t_left_braket {
+		return nil, fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t_left_braket])
+	}
+	err := p.advance()
 	if err != nil {
 		return nil, err
 	}
 
 	if p.cur_tok.Type == t_right_braket {
-		err = p.advance()
-		return []any{}, err
+		return []any{}, p.advance()
 	}
 
 	a := make([]any, 0, 8)
 
 	for p.cur_tok.Type != t_eof && p.cur_tok.Type != t_right_braket {
 		if len(a) > 0 {
-			err := p.expect(t_comma)
+			if p.cur_tok.Type != t_comma {
+				return nil, fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t_comma])
+			}
+			err := p.advance()
 			if err != nil {
 				return nil, err
 			}
@@ -142,7 +155,11 @@ func (p *parser) array() ([]any, error) {
 		a = append(a, node)
 	}
 
-	return a, p.expect(t_right_braket)
+	if p.cur_tok.Type != t_right_braket {
+		return nil, fmt.Errorf("Unexpected %q at this position, expected %q", tokennames[p.cur_tok.Type], tokennames[t_right_braket])
+	}
+
+	return a, p.advance()
 }
 
 func (p *parser) atom() (any, error) {
