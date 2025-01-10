@@ -39,17 +39,9 @@ func TestObjectReadme(t *testing.T) {
 
 	// accessing values
 	// fmt.Println(Get[string](&jsonObj, ".hello.world.0")) // hi
-
-	// updating values
-	Set(&jsonObj, ".hello.world.0", "heyho")
-	// fmt.Println(Get[string](&jsonObj, ".hello.world.0")) // heyho
-	Set(&jsonObj, ".hello.world", []string{"hi", "heyho"})
-	// fmt.Println(Get[string](&jsonObj, ".hello.world")) // []string{"hi", "heyho"}
-
-	// compiling queries for faster access
-	// helloWorldQuery, _ := Compile[[]any](jsonObj, ".hello.world")
-	// cachedQuery, _ := helloWorldQuery()
-	// fmt.Println(cachedQuery)
+	val, err := Get[string](&jsonObj, ".hello.world.0")
+	assert.NoError(t, err)
+	assert.EqualValues(t, "hi", val)
 }
 
 func TestStandardFail(t *testing.T) {
@@ -62,8 +54,9 @@ func TestStandardFail(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i, func(t *testing.T) {
-			p := parser{l: lexer{data: []byte(i)}}
-			_, err := p.parse()
+			in := []byte(i)
+			p := parser{l: lexer{data: in}}
+			_, err := p.parse(in)
 			assert.Error(t, err)
 		})
 	}

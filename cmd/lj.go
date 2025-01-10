@@ -8,8 +8,6 @@ import (
 	"github.com/xnacly/libjson"
 )
 
-// TODO: support for piping data into lj
-
 func Must[T any](t T, err error) T {
 	if err != nil {
 		log.Fatalln(err)
@@ -19,16 +17,16 @@ func Must[T any](t T, err error) T {
 
 func main() {
 	args := os.Args
-	if len(args) == 1 {
-		log.Fatalln("Wanted a file as first argument, got nothing, exiting")
-	}
-	file := Must(os.Open(args[1]))
-	if len(args) == 3 {
-		json := Must(libjson.NewReader(file))
-		query := os.Args[2]
-		fmt.Printf("%+#v\n", Must(libjson.Get[any](&json, query)))
+	var file *os.File
+	if info, err := os.Stdin.Stat(); err != nil || info.Mode()&os.ModeCharDevice != 0 { // we are in a pipe
+		if len(args) == 1 {
+			log.Fatalln("Wanted a file as first argument, got nothing, exiting")
+		}
+		file = Must(os.Open(args[1]))
 	} else {
-		json := Must(libjson.NewReader(file))
-		fmt.Println(Must(libjson.Get[any](&json, ".")))
+		file = os.Stdin
 	}
+	query := os.Args[len(os.Args)-1]
+	json := Must(libjson.NewReader(file))
+	fmt.Printf("%+#v\n", Must(libjson.Get[any](&json, query)))
 }

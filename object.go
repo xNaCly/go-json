@@ -1,20 +1,14 @@
 package libjson
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 )
 
 type JSON struct {
 	obj any
-}
-
-func Set[T any](obj *JSON, path string, value T) error {
-	return obj.set(path, value)
 }
 
 func Get[T any](obj *JSON, path string) (T, error) {
@@ -29,26 +23,6 @@ func Get[T any](obj *JSON, path string) (T, error) {
 	} else {
 		return castVal, nil
 	}
-}
-
-func Compile[T any](obj *JSON, path string) (func() (T, error), error) {
-	f, err := obj.compile()
-	if err != nil {
-		return nil, err
-	}
-	return func() (T, error) {
-		val, err := f()
-		if err != nil {
-			var e T
-			return e, err
-		}
-		if castVal, ok := val.(T); !ok {
-			var e T
-			return e, fmt.Errorf("Expected value of type %T, got type %T", e, val)
-		} else {
-			return castVal, nil
-		}
-	}, nil
 }
 
 func indexByKey(data any, key any) (any, error) {
@@ -136,25 +110,6 @@ func (j *JSON) get(path string) (any, error) {
 	return f(j.obj)
 }
 
-func (j *JSON) set(path string, value any) error {
-	// TODO:
-	return nil
-}
-
-func (j *JSON) compile() (func() (any, error), error) {
-	f := func() (any, error) { return nil, nil }
-	// TODO:
-	return f, errors.ErrUnsupported
-}
-
 func (j *JSON) MarshalJSON() ([]byte, error) {
 	return json.Marshal(j.obj)
 }
-
-func (j *JSON) String() string {
-	b := strings.Builder{}
-	stringify(&b, j.obj)
-	return b.String()
-}
-
-func stringify(b *strings.Builder, cur any) {}

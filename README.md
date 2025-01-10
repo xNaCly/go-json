@@ -16,18 +16,7 @@ func main() {
 	jsonObj, _ := New(input) // or libjson.NewReader(r io.Reader)
 
 	// accessing values
-	fmt.Println(Get[string](jsonObj, ".hello.world.0")) // hi
-
-	// updating values
-	Set(jsonObj, ".hello.world.0", "heyho")
-	fmt.Println(Get[string](jsonObj, ".hello.world.0")) // heyho
-	Set(jsonObj, ".hello.world", []string{"hi", "heyho"})
-	fmt.Println(Get[string](jsonObj, ".hello.world")) // []string{"hi", "heyho"}
-
-	// compiling queries for faster access
-	helloWorldQuery, _ := Compile[[]any](jsonObj, ".hello.world")
-	cachedQuery, _ := helloWorldQuery()
-	fmt.Println(cachedQuery)
+	fmt.Println(Get[string](jsonObj, ".hello.world.0")) // hi, nil
 }
 ```
 
@@ -60,6 +49,16 @@ Go version: 1.23
 Below this section is a list of performance improvements and their impact on
 the overall performance as well as the full results of
 [test/bench.sh](test/bench.sh).
+
+### []()
+
+| JSON size | `encoding/json` | `libjson` |
+| --------- | --------------- | --------- |
+| 1MB       | 24.2ms          | 12.0ms    |
+| 5MB       | 117.3ms         | 49.8ms    |
+| 10MB      | 225ms           | 93.8ms    |
+
+- replaced byte slices with offsets and lengths in the `token` struct
 
 ### [88c5eb9](https://github.com/xNaCly/libjson/commit/88c5eb91c4fb1586af29b2cab3563b6ade424323)
 

@@ -20,28 +20,20 @@ func main() {
 	// defer pprof.StopCPUProfile()
 	lj := flag.Bool("libjson", true, "benchmark libjson or gojson")
 	flag.Parse()
+	args := flag.Args()
+	if len(args) == 0 {
+		log.Fatalln("Wanted a file as first argument, got nothing, exiting")
+	}
+	file, err := os.Open(args[0])
+	if err != nil {
+		log.Fatalln(err)
+	}
 	if *lj {
-		args := flag.Args()
-		if len(args) == 0 {
-			log.Fatalln("Wanted a file as first argument, got nothing, exiting")
-		}
-		file, err := os.Open(args[0])
-		if err != nil {
-			log.Fatalln(err)
-		}
-		_, err = libjson.NewReader(file)
+		_, err := libjson.NewReader(file)
 		if err != nil {
 			log.Fatalln(err)
 		}
 	} else {
-		args := flag.Args()
-		if len(args) == 0 {
-			log.Fatalln("Wanted a file as first argument, got nothing, exiting")
-		}
-		file, err := os.Open(args[0])
-		if err != nil {
-			log.Fatalln(err)
-		}
 		v := []struct {
 			Key1      string
 			Array     []any
@@ -49,7 +41,7 @@ func main() {
 			AtomArray []any
 		}{}
 		d := json.NewDecoder(file)
-		err = d.Decode(&v)
+		err := d.Decode(&v)
 		if err != nil {
 			log.Fatalln(err)
 		}

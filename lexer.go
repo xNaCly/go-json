@@ -60,7 +60,7 @@ func (l *lexer) next() (token, error) {
 				return empty, errors.New("Unterminated string detected")
 			}
 		}
-		t := token{Type: t_string, Val: l.data[start:end]}
+		t := token{Type: t_string, Start: start, End: end}
 		return t, nil
 	case 't': // this should always be the 'true' atom and is therefore optimised here
 		if l.pos+3 > len(l.data) {
@@ -94,8 +94,7 @@ func (l *lexer) next() (token, error) {
 			start := l.pos - 1
 			cc, err = l.advance()
 			if err != nil {
-				// we hit eof here
-				return token{Type: t_number, Val: []byte{l.data[start]}}, nil
+				return token{Type: t_number, Start: start, End: l.pos}, nil
 			}
 
 			for {
@@ -113,14 +112,13 @@ func (l *lexer) next() (token, error) {
 				}
 			}
 
-			t := token{Type: t_number, Val: l.data[start:l.pos]}
-			return t, nil
+			return token{Type: t_number, Start: start, End: l.pos}, nil
 		} else {
 			return empty, fmt.Errorf("Unexpected character %q at this position.", cc)
 		}
 	}
 
-	return token{tt, nil}, nil
+	return token{Type: tt}, nil
 }
 
 // lex is only intended for tests, use lexer.next() for production code

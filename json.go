@@ -10,7 +10,7 @@ func NewReader(r io.Reader) (JSON, error) {
 		return JSON{}, err
 	}
 	p := parser{l: lexer{data: data}}
-	obj, err := p.parse()
+	obj, err := p.parse(data)
 	if err != nil {
 		return JSON{}, err
 	}
@@ -19,7 +19,7 @@ func NewReader(r io.Reader) (JSON, error) {
 
 func New(data []byte) (JSON, error) {
 	p := parser{l: lexer{data: data}}
-	obj, err := p.parse()
+	obj, err := p.parse(data)
 	if err != nil {
 		return JSON{}, err
 	}

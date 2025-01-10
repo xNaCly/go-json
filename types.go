@@ -3,7 +3,14 @@ package libjson
 // json type
 type t_json int32
 
-var empty = token{Type: t_eof, Val: nil}
+type token struct {
+	Type t_json
+	// only populated for number and string
+	Start int
+	End   int
+}
+
+var empty = token{Type: t_eof}
 
 const (
 	t_string       t_json = iota // anything between ""
@@ -33,9 +40,4 @@ var tokennames = map[t_json]string{
 	t_comma:        ",",
 	t_colon:        ":",
 	t_eof:          "EOF",
-}
-
-type token struct {
-	Type t_json
-	Val  []byte // only populated for number and string
 }

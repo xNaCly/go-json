@@ -1,7 +1,6 @@
 package libjson
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,6 +9,7 @@ import (
 func TestParserAtoms(t *testing.T) {
 	input := []string{
 		"1",
+		"1.0",
 		"true",
 		"false",
 		"null",
@@ -20,6 +20,7 @@ func TestParserAtoms(t *testing.T) {
 		// i forgor 💀
 		// (to test the lexing of single digit numbers, the eof handling was wrong)
 		1.0,
+		1.0,
 		true,
 		false,
 		nil,
@@ -28,12 +29,11 @@ func TestParserAtoms(t *testing.T) {
 	}
 	for i, in := range input {
 		t.Run(in, func(t *testing.T) {
-			p := &parser{l: lexer{data: []byte(in)}}
-			out, err := p.parse()
+			in := []byte(in)
+			p := &parser{l: lexer{data: in}}
+			out, err := p.parse(in)
 			assert.NoError(t, err)
-			if !assert.EqualValues(t, wanted[i], out) {
-				fmt.Println(p.t)
-			}
+			assert.EqualValues(t, wanted[i], out)
 		})
 	}
 }
@@ -53,8 +53,9 @@ func TestParserArray(t *testing.T) {
 	}
 	for i, in := range input {
 		t.Run(in, func(t *testing.T) {
-			p := &parser{l: lexer{data: []byte(in)}}
-			out, err := p.parse()
+			in := []byte(in)
+			p := &parser{l: lexer{data: in}}
+			out, err := p.parse(in)
 			assert.NoError(t, err)
 			assert.EqualValues(t, wanted[i], out)
 		})
@@ -80,8 +81,9 @@ func TestParserObject(t *testing.T) {
 	}
 	for i, in := range input {
 		t.Run(in, func(t *testing.T) {
-			p := &parser{l: lexer{data: []byte(in)}}
-			out, err := p.parse()
+			in := []byte(in)
+			p := &parser{l: lexer{data: in}}
+			out, err := p.parse(in)
 			assert.NoError(t, err)
 			assert.EqualValues(t, wanted[i], out)
 		})
@@ -107,8 +109,9 @@ func TestParserEdge(t *testing.T) {
 	}
 	for i, in := range input {
 		t.Run(in, func(t *testing.T) {
-			p := &parser{l: lexer{data: []byte(in)}}
-			out, err := p.parse()
+			in := []byte(in)
+			p := &parser{l: lexer{data: in}}
+			out, err := p.parse(in)
 			assert.NoError(t, err)
 			assert.EqualValues(t, wanted[i], out)
 		})
@@ -141,8 +144,9 @@ func TestParserFail(t *testing.T) {
 	}
 	for _, in := range input {
 		t.Run(in, func(t *testing.T) {
-			p := &parser{l: lexer{data: []byte(in)}}
-			out, err := p.parse()
+			in := []byte(in)
+			p := &parser{l: lexer{data: in}}
+			out, err := p.parse(in)
 			assert.Error(t, err)
 			assert.Nil(t, out)
 		})
