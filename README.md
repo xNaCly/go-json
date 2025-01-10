@@ -50,7 +50,17 @@ Below this section is a list of performance improvements and their impact on
 the overall performance as well as the full results of
 [test/bench.sh](test/bench.sh).
 
-### []()
+### [b23001e](https://github.com/xNaCly/libjson/commit/b23001eca470935976a36cfbbc7a3c773d784a03)
+
+| JSON size | `encoding/json` | `libjson` |
+| --------- | --------------- | --------- |
+| 1MB       | 24.2ms          | 11.5ms    |
+| 5MB       | 117.3ms         | 48.5ms    |
+| 10MB      | 225ms           | 91ms      |
+
+- manually inlined `parser::expect`
+
+### [0058abb](https://github.com/xNaCly/libjson/commit/0058abb7381735b27783f9809947d7e0f22d9b05)
 
 | JSON size | `encoding/json` | `libjson` |
 | --------- | --------------- | --------- |
