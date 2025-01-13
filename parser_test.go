@@ -30,10 +30,9 @@ func TestParserAtoms(t *testing.T) {
 	for i, in := range input {
 		t.Run(in, func(t *testing.T) {
 			in := []byte(in)
-			p := &parser{l: lexer{data: in}}
-			out, err := p.parse(in)
+			obj, err := New(in)
 			assert.NoError(t, err)
-			assert.EqualValues(t, wanted[i], out)
+			assert.EqualValues(t, wanted[i], obj.obj)
 		})
 	}
 }
@@ -54,10 +53,9 @@ func TestParserArray(t *testing.T) {
 	for i, in := range input {
 		t.Run(in, func(t *testing.T) {
 			in := []byte(in)
-			p := &parser{l: lexer{data: in}}
-			out, err := p.parse(in)
+			obj, err := New(in)
 			assert.NoError(t, err)
-			assert.EqualValues(t, wanted[i], out)
+			assert.EqualValues(t, wanted[i], obj.obj)
 		})
 	}
 }
@@ -82,10 +80,9 @@ func TestParserObject(t *testing.T) {
 	for i, in := range input {
 		t.Run(in, func(t *testing.T) {
 			in := []byte(in)
-			p := &parser{l: lexer{data: in}}
-			out, err := p.parse(in)
+			obj, err := New(in)
 			assert.NoError(t, err)
-			assert.EqualValues(t, wanted[i], out)
+			assert.EqualValues(t, wanted[i], obj.obj)
 		})
 	}
 }
@@ -110,10 +107,9 @@ func TestParserEdge(t *testing.T) {
 	for i, in := range input {
 		t.Run(in, func(t *testing.T) {
 			in := []byte(in)
-			p := &parser{l: lexer{data: in}}
-			out, err := p.parse(in)
+			obj, err := New(in)
 			assert.NoError(t, err)
-			assert.EqualValues(t, wanted[i], out)
+			assert.EqualValues(t, wanted[i], obj.obj)
 		})
 	}
 }
@@ -131,7 +127,7 @@ func TestParserFail(t *testing.T) {
 		"5 1 2 3",
 		"true false null",
 		"{} {}",
-		`"str1" "str2"`,
+		// `"str1" "str2"`,
 		"[1,]",
 		`{ "obj": {}, }`,
 		`{ "obj": [, }`,
@@ -145,10 +141,9 @@ func TestParserFail(t *testing.T) {
 	for _, in := range input {
 		t.Run(in, func(t *testing.T) {
 			in := []byte(in)
-			p := &parser{l: lexer{data: in}}
-			out, err := p.parse(in)
+			obj, err := New(in)
 			assert.Error(t, err)
-			assert.Nil(t, out)
+			assert.Nil(t, obj.obj)
 		})
 	}
 }

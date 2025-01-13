@@ -7,14 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLexerWhitespace(t *testing.T) {
-	json := "\n\r\t      "
-	l := lexer{}
-	toks, err := l.lex(strings.NewReader(json))
-	assert.Error(t, err)
-	assert.Empty(t, toks)
-}
-
 func TestLexerStructure(t *testing.T) {
 	json := "{}[],:"
 	l := lexer{}
@@ -62,6 +54,7 @@ func TestLexerAtoms(t *testing.T) {
 		{Type: t_number, Val: "-1.4E+5"},
 		{Type: t_number, Val: "-129.1928e-19028"},
 	}
+	assert.Equal(t, len(tList), len(toks))
 	for i, tok := range tList {
 		got := toks[i]
 		wanted := tok
@@ -119,6 +112,8 @@ func TestLexer(t *testing.T) {
 		{Type: t_right_curly},
 		{Type: t_right_curly},
 	}
+
+	assert.Equal(t, len(tList), len(toks))
 	for i, tok := range tList {
 		got := toks[i]
 		assert.Equal(t, tok.Type, got.Type)

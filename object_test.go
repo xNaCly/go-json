@@ -54,9 +54,7 @@ func TestStandardFail(t *testing.T) {
 	}
 	for _, i := range input {
 		t.Run(i, func(t *testing.T) {
-			in := []byte(i)
-			p := parser{l: lexer{data: in}}
-			_, err := p.parse(in)
+			_, err := New([]byte(i))
 			assert.Error(t, err)
 		})
 	}
