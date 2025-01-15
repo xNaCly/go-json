@@ -37,6 +37,9 @@ func main() {
 
 ## Benchmarks
 
+![libjson-vs-encodingjson](https://github.com/user-attachments/assets/b11bcce4-e7db-4c45-ab42-45a2042e2a51)
+
+
 These results were generated with the following specs:
 
 ```text
