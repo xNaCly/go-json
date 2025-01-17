@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var depths = map[string]int{
@@ -18,17 +19,20 @@ func main() {
 	for depthName, depth := range depths {
 		fmt.Printf("Generating %d depth object\n", depth)
 
-		jsonString := "{"
+		var builder strings.Builder
+		builder.WriteString("{")
 
 		for i := 1; i < depth; i++ {
-			jsonString += `"next":{`
+			builder.WriteString(`"next":{`)
 		}
 
-		jsonString += `"next":null`
+		builder.WriteString(`"next":null`)
 
 		for i := 0; i < depth; i++ {
-			jsonString += "}"
+			builder.WriteString("}")
 		}
+
+		jsonString := builder.String()
 
 		fileName := fmt.Sprintf("%s_recursion.json", depthName)
 		filePath := filepath.Join(filepath.Dir(os.Args[0]), fileName)
