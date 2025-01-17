@@ -11,15 +11,17 @@ depths = {
 for depth_name, depth in depths.items():
     print(f"Generating {depth} depth object")
 
-    json_string = "{"
+    json_parts = ["{"]
 
     for _ in range(1, depth):
-        json_string += '"next":{'
+        json_parts.append('"next":{')
 
-    json_string += '"next":null'
+    json_parts.append('"next":null')
 
     for _ in range(depth):
-        json_string += "}"
+        json_parts.append("}")
+
+    json_string = "".join(json_parts)
 
     file_name = f"{depth_name}_recursion.json"
     file_path = os.path.join(os.path.dirname(__file__), file_name)
@@ -28,4 +30,3 @@ for depth_name, depth in depths.items():
         f.write(json_string)
 
     print(f"File for depth {depth} saved as {file_name}")
-
